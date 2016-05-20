@@ -25,7 +25,7 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>roborox-snapshots</id>
-			<url>${roborox.snapshots.url}</url>
+			<url>${roborox.nexus.url}/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 

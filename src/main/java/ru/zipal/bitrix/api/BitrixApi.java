@@ -75,6 +75,10 @@ public class BitrixApi {
         return client.execute(domain, "crm.activity.add", params, tokens).getLong("result");
     }
 
+    public void bindEvent(String domain, BitrixClient.Tokens tokens, String event, String handler) throws BitrixApiException {
+        client.execute(domain, "event.bind", Arrays.asList(new BasicNameValuePair("event", event), new BasicNameValuePair("handler", handler)), tokens);
+    }
+
     private <T> BitrixPage<T> getPage(JSONObject json, Class<T> clazz) throws BitrixApiException {
         final JSONArray array = json.getJSONArray("result");
         System.out.println(json.toString());
