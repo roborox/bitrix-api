@@ -13,6 +13,7 @@ import ru.zipal.bitrix.api.response.SuccessBitrixResponse;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BitrixHttpClient {
     public static final Logger logger = LoggerFactory.getLogger(BitrixHttpClient.class);
@@ -40,7 +41,7 @@ public class BitrixHttpClient {
     }
 
     public JSONObject post(String url, List<NameValuePair> params) throws BitrixApiException {
-        logger.info("post {} with {}", url, params);
+        logger.info("post {} with {}", url, params.stream().filter(p -> !p.getName().contains("fileData")).collect(Collectors.toList()));
         return execute(Request.Post(url).bodyForm(params, UTF_8));
     }
 
