@@ -67,6 +67,12 @@ public class BitrixApi {
         return client.execute(domain, "crm.contact.add", serializer.serialize(contact), tokens).getLong("result");
     }
 
+    public void updateContact(String domain, BitrixClient.Tokens tokens, BitrixContact contact) throws BitrixApiException {
+        final List<NameValuePair> params = serializer.serialize(contact);
+        params.add(new BasicNameValuePair("id", Long.toString(contact.getId())));
+        client.execute(domain, "crm.contact.update", params, tokens);
+    }
+
     public Long createLead(String domain, BitrixClient.Tokens tokens, BitrixLead lead) throws BitrixApiException {
         return client.execute(domain, "crm.lead.add", serializer.serialize(lead), tokens).getLong("result");
     }
