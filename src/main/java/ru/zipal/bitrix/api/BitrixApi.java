@@ -55,8 +55,8 @@ public class BitrixApi {
         return getPage(client.execute(domain, "user.get", params, tokens), BitrixUser.class);
     }
 
-    public BitrixContact getContact(String domain, BitrixClient.Tokens tokens, Long id) throws BitrixApiException {
-        return serializer.deserialize(BitrixContact.class, client.execute(domain, "crm.contact.get", Collections.singletonList(new BasicNameValuePair("id", id.toString())), tokens).getJSONObject("result"));
+    public BitrixContact getContact(String domain, BitrixClient.Tokens tokens, long id) throws BitrixApiException {
+        return serializer.deserialize(BitrixContact.class, client.execute(domain, "crm.contact.get", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens).getJSONObject("result"));
     }
 
     public void removeContact(String domain, BitrixClient.Tokens tokens, long id) throws BitrixApiException {

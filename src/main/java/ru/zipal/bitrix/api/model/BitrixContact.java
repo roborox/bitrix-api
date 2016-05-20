@@ -12,6 +12,8 @@ import java.util.List;
 public class BitrixContact {
 	private Long id;
 	private String name;
+	@FieldName("LAST_NAME")
+	private String lastName;
 	private YesNo opened = YesNo.YES;
 	@FieldName("DATE_CREATE")
 	private Date created;
@@ -30,6 +32,14 @@ public class BitrixContact {
 	private List<BitrixCommunication> phones;
 	@FieldName("EMAIL")
 	private List<BitrixCommunication> emails;
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
 	public Long getId() {
 		return id;
@@ -138,16 +148,7 @@ public class BitrixContact {
 		return "BitrixContact{" +
 				"id=" + id +
 				", name='" + name + '\'' +
-				", opened=" + opened +
-				", created=" + created +
-				", updated=" + updated +
-				", type=" + type +
-				", source=" + source +
-				", responsible='" + responsible + '\'' +
-				", leadId=" + leadId +
-				", comments='" + comments + '\'' +
-				", phones=" + phones +
-				", emails=" + emails +
+				", lastName=" + lastName +
 				'}';
 	}
 }
