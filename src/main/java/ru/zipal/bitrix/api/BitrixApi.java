@@ -79,6 +79,10 @@ public class BitrixApi {
         client.execute(domain, "event.bind", Arrays.asList(new BasicNameValuePair("event", event), new BasicNameValuePair("handler", handler)), tokens);
     }
 
+    public void unbindEvent(String domain, BitrixClient.Tokens tokens, String event, String handler) throws BitrixApiException {
+        client.execute(domain, "event.unbind", Arrays.asList(new BasicNameValuePair("event", event), new BasicNameValuePair("handler", handler)), tokens);
+    }
+
     private <T> BitrixPage<T> getPage(JSONObject json, Class<T> clazz) throws BitrixApiException {
         final JSONArray array = json.getJSONArray("result");
         System.out.println(json.toString());
