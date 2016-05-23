@@ -51,9 +51,4 @@ public class BitrixClient {
         return newAccessToken;
     }
 
-    public interface Tokens {
-        void updateTokens(String accessToken, String refreshToken);
-        String getAccessToken();
-        String getRefreshToken();
-    }
 }
