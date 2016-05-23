@@ -21,9 +21,19 @@ public class BitrixHttpClient {
     public static final int TIMEOUT = 30000;
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
+    private final boolean logResponse;
+
+    public BitrixHttpClient() {
+        this(false);
+    }
+
+    public BitrixHttpClient(boolean logResponse) {
+        this.logResponse = logResponse;
+    }
+
     private JSONObject execute(Request request) throws BitrixApiException {
         try {
-            final BitrixResponse response = request.socketTimeout(TIMEOUT).connectTimeout(TIMEOUT).execute().handleResponse(new BitrixResponseHandler());
+            final BitrixResponse response = request.socketTimeout(TIMEOUT).connectTimeout(TIMEOUT).execute().handleResponse(new BitrixResponseHandler(logResponse));
             if (response instanceof SuccessBitrixResponse) {
                 return ((SuccessBitrixResponse) response).getResult();
             } else if (response instanceof ErrorBitrixResponse){
