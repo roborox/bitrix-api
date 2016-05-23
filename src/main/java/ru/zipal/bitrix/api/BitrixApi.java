@@ -93,6 +93,10 @@ public class BitrixApi {
         client.execute(domain, "event.unbind", Arrays.asList(new BasicNameValuePair("event", event), new BasicNameValuePair("handler", handler)), tokens);
     }
 
+    public boolean isAdmin(String domain, BitrixClient.Tokens tokens) throws BitrixApiException {
+        return client.execute(domain, "user.admin", Collections.emptyList(), tokens).getBoolean("result");
+    }
+
     private <T> BitrixPage<T> getPage(JSONObject json, Class<T> clazz) throws BitrixApiException {
         final JSONArray array = json.getJSONArray("result");
         System.out.println(json.toString());
