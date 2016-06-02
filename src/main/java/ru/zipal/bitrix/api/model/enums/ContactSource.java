@@ -7,7 +7,8 @@ public enum ContactSource implements BitrixEnum {
     ASSIS("10"),
     JCAT("11"),
     FEEDS("12"),
-    GBN24("13");
+    GBN24("13"),
+    REALTOR_ASSIST("15");
 
     private final String id;
 

@@ -21,7 +21,7 @@ public class SerializerTest {
 
     @Test
     public void serialize() {
-        final BitrixActivity activity = new BitrixActivity();
+        final ChildActivity activity = new ChildActivity();
         activity.setResponsible(RandomUtils.nextLong(0, Integer.MAX_VALUE));
         activity.setDescription(RandomStringUtils.randomAlphabetic(10));
 
@@ -37,7 +37,7 @@ public class SerializerTest {
         final String description = RandomStringUtils.randomAlphabetic(10);
         final long responsibleId = RandomUtils.nextLong(0, Integer.MAX_VALUE);
 
-        final BitrixActivity activity = serializer.deserialize(BitrixActivity.class, new JSONObject(String.format(JSON_FORMAT, description, responsibleId)));
+        final BitrixActivity activity = serializer.deserialize(ChildActivity.class, new JSONObject(String.format(JSON_FORMAT, description, responsibleId)));
 
         assertEquals(activity.getDescription(), description);
         assertEquals(activity.getResponsible().longValue(), responsibleId);

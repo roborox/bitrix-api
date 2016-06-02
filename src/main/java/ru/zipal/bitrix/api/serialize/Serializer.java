@@ -14,10 +14,7 @@ import ru.zipal.bitrix.api.model.enums.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class Serializer {
@@ -59,7 +56,7 @@ public class Serializer {
     public <T> T deserialize(Class<T> clazz, JSONObject object) throws BitrixApiException {
         try {
             final T t = clazz.newInstance();
-            for (Field field : clazz.getDeclaredFields()) {
+            for (Field field : getAllFields(clazz)) {
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
@@ -82,9 +79,23 @@ public class Serializer {
         }
     }
 
+    private static List<Field> addAllFields(List<Field> fields, Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
+        if (type.getSuperclass() != null && !type.equals(type.getSuperclass())) {
+            fields = addAllFields(fields, type.getSuperclass());
+        }
+        return fields;
+    }
+
+    private static List<Field> getAllFields(Class<?> type) {
+        final ArrayList<Field> result = new ArrayList<>();
+        addAllFields(result, type);
+        return result;
+    }
+
     public List<NameValuePair> serialize(Object what) {
         final List<NameValuePair> result = new ArrayList<>();
-        for (Field field : what.getClass().getDeclaredFields()) {
+        for (Field field : getAllFields(what.getClass())) {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
@@ -95,7 +106,7 @@ public class Serializer {
                     if (values != null) {
                         int i = 0;
                         for (Object object : values) {
-                            for (Field objectField : object.getClass().getDeclaredFields()) {
+                            for (Field objectField : getAllFields(object.getClass())) {
                                 addArrayField(result, determineName(field), i, determineName(objectField), getSimpleValue(objectField, object));
                             }
                         }
