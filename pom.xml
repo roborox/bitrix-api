@@ -35,6 +35,10 @@
 	</build>
 
 	<distributionManagement>
+		<repository>
+			<id>roborox-releases</id>
+			<url>${roborox.nexus.url}/content/repositories/releases/</url>
+		</repository>
 		<snapshotRepository>
 			<id>roborox-snapshots</id>
 			<url>${roborox.nexus.url}/content/repositories/snapshots</url>
