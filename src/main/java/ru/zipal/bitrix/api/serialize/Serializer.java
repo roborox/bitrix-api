@@ -1,14 +1,14 @@
 package ru.zipal.bitrix.api.serialize;
 
-import ru.zipal.bitrix.api.BitrixApiException;
-import ru.zipal.bitrix.api.common.BitrixEnum;
-import ru.zipal.bitrix.api.common.FieldName;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import ru.zipal.bitrix.api.BitrixApiException;
+import ru.zipal.bitrix.api.common.BitrixEnum;
+import ru.zipal.bitrix.api.common.FieldName;
 import ru.zipal.bitrix.api.model.enums.*;
 
 import java.lang.reflect.Field;
@@ -47,8 +47,12 @@ public class Serializer {
     public <T> List<T> deserializeArray(Class<T> clazz, JSONArray array) throws BitrixApiException {
         final List list = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
-            final JSONObject item = array.getJSONObject(i);
-            list.add(deserialize(clazz, item));
+            final Object item = array.get(i);
+            if (item instanceof JSONObject) {
+                list.add(deserialize(clazz, (JSONObject) item));
+            } else {
+                list.add(convertUtils.convert(item, clazz));
+            }
         }
         return list;
     }

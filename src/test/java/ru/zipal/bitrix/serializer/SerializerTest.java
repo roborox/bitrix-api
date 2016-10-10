@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import ru.zipal.bitrix.api.BitrixApiException;
 import ru.zipal.bitrix.api.model.BitrixActivity;
+import ru.zipal.bitrix.api.model.BitrixUser;
 import ru.zipal.bitrix.api.serialize.Serializer;
 
 import java.util.List;
@@ -41,5 +42,16 @@ public class SerializerTest {
 
         assertEquals(activity.getDescription(), description);
         assertEquals(activity.getResponsible().longValue(), responsibleId);
+    }
+
+    @Test
+    public void deserializeUser() throws BitrixApiException {
+        final String json = "{\"UF_SKYPE\":\"dene_bola\",\"ACTIVE\":true,\"PERSONAL_ZIP\":null,\"UF_FACEBOOK\":null,\"UF_PHONE_INNER\":null,\"EMAIL\":\"irina@zipal.ru\",\"LAST_NAME\":\"Савельева\",\"PERSONAL_STREET\":null,\"PERSONAL_PHOTO\":\"https://cdn.bitrix24.ru/b807897/main/631/631019b8d5528050cfb30542f6eba290/WSutDo4.jpg\",\"SECOND_NAME\":\"\",\"UF_SKILLS\":null,\"UF_XING\":null,\"PERSONAL_BIRTHDAY\":\"1990-12-17T03:00:00+03:00\",\"PERSONAL_PHONE\":null,\"PERSONAL_CITY\":\"Смоленск\",\"UF_WEB_SITES\":null,\"ID\":\"54\",\"PERSONAL_COUNTRY\":null,\"PERSONAL_MOBILE\":\"+79002272526\",\"WORK_COMPANY\":null,\"UF_INTERESTS\":null,\"UF_LINKEDIN\":null,\"UF_DEPARTMENT\":[7],\"WORK_POSITION\":\"\",\"WORK_PHONE\":\"\",\"NAME\":\"Ирина\",\"PERSONAL_PROFESSION\":null,\"UF_TWITTER\":null,\"UF_DISTRICT\":null,\"PERSONAL_FAX\":null,\"PERSONAL_STATE\":null,\"PERSONAL_PAGER\":null,\"PERSONAL_GENDER\":\"F\",\"PERSONAL_WWW\":\"\",\"PERSONAL_ICQ\":null}";
+
+        final BitrixUser user = serializer.deserialize(BitrixUser.class, new JSONObject(json));
+
+        System.out.println("result is " + user);
+        assertEquals(user.getDepartments().size(), 1);
+        assertEquals(user.getDepartments().get(0).longValue(), 7L);
     }
 }
