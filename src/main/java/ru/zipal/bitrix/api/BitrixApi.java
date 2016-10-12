@@ -21,7 +21,7 @@ public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User
     private final Class<Lead> leadClass;
     private final Class<User> userClass;
 
-    private BitrixApi(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<Contact> contactClass, Class<Activity> activityClass, Class<Lead> leadClass, Class<User> userClass) {
+    protected BitrixApi(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<Contact> contactClass, Class<Activity> activityClass, Class<Lead> leadClass, Class<User> userClass) {
         this.client = client;
         this.serializer = serializer;
         this.tokens = tokens;
