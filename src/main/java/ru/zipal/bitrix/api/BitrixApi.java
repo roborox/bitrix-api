@@ -131,7 +131,6 @@ public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User
 
     private <T> BitrixPage<T> getPage(JSONObject json, Class<T> clazz) throws BitrixApiException {
         final JSONArray array = json.getJSONArray("result");
-        System.out.println(json.toString());
         return new BitrixPage<>(json.has("next") ? json.getInt("next") : null, serializer.deserializeArray(clazz, array));
     }
 }
