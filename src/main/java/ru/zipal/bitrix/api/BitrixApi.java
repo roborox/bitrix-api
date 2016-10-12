@@ -109,6 +109,10 @@ public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User
         return getPage(client.execute(domain, "crm.activity.list", params, tokens), activityClass);
     }
 
+    public Activity getActivity(long id) throws BitrixApiException {
+        return serializer.deserialize(activityClass, client.execute(domain, "crm.activity.get", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens).getJSONObject("result"));
+    }
+
     public Long createActivity(Activity activity, NameValuePair... additional) throws BitrixApiException {
         final List<NameValuePair> params = serializer.serialize(activity);
         if (additional != null) {
