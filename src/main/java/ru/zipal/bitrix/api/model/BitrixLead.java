@@ -19,6 +19,7 @@ public class BitrixLead implements HasId {
 	private String sourceId = "CALL";
 	@FieldName("SOURCE_DESCRIPTION")
 	private String sourceDescription;
+	private String comments;
 
 	public Long getId() {
 		return id;
@@ -85,6 +86,14 @@ public class BitrixLead implements HasId {
 
 	public void setSourceDescription(String sourceDescription) {
 		this.sourceDescription = sourceDescription;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 	@Override
