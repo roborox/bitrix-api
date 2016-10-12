@@ -6,7 +6,7 @@ import ru.zipal.bitrix.api.model.enums.YesNo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BitrixLead {
+public class BitrixLead implements HasId {
 	private Long id;
 	private YesNo opened = YesNo.YES;
 	private String name;

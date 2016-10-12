@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BitrixContact {
+public class BitrixContact implements HasId {
 	private Long id;
 	private String name;
 	@FieldName("LAST_NAME")

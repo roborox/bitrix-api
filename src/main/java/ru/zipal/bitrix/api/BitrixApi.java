@@ -4,16 +4,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import ru.zipal.bitrix.api.model.BitrixActivity;
-import ru.zipal.bitrix.api.model.BitrixContact;
-import ru.zipal.bitrix.api.model.BitrixLead;
-import ru.zipal.bitrix.api.model.BitrixUser;
+import ru.zipal.bitrix.api.model.*;
 import ru.zipal.bitrix.api.serialize.Serializer;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class BitrixApi<Contact, Activity, Lead, User> {
+public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User> {
     private final BitrixClient client;
     private final Serializer serializer;
     private final Tokens tokens;
@@ -39,38 +36,19 @@ public class BitrixApi<Contact, Activity, Lead, User> {
         return new BitrixApi<>(client, serializer, tokens, domain, BitrixContact.class, BitrixActivity.class, BitrixLead.class, BitrixUser.class);
     }
 
-    public static <Contact, Activity, Lead, User> BitrixApi<Contact, Activity, Lead, User> custom(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<Contact> contactClass, Class<Activity> activityClass, Class<Lead> leadClass, Class<User> userClass) {
+    public static <Contact extends HasId, Activity, Lead extends HasId, User> BitrixApi<Contact, Activity, Lead, User> custom(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<Contact> contactClass, Class<Activity> activityClass, Class<Lead> leadClass, Class<User> userClass) {
         return new BitrixApi<>(client, serializer, tokens, domain, contactClass, activityClass, leadClass, userClass);
     }
 
-    public BitrixPage<Contact> listContacts(Integer start, String phone) throws BitrixApiException {
+    public BitrixPage<Contact> listContacts(Integer start, NameValuePair... additional) throws BitrixApiException {
         final List<NameValuePair> params = new ArrayList<>();
         if (start != null) {
             params.add(new BasicNameValuePair("start", start.toString()));
         }
-        if (phone != null) {
-            params.add(new BasicNameValuePair("filter[PHONE]", phone));
+        if (additional != null) {
+            params.addAll(Arrays.asList(additional));
         }
         return getPage(client.execute(domain, "crm.contact.list", params, tokens), contactClass);
-    }
-
-    public BitrixPage<Lead> listLeads(Integer start, String phone) throws BitrixApiException {
-        final List<NameValuePair> params = new ArrayList<>();
-        if (start != null) {
-            params.add(new BasicNameValuePair("start", start.toString()));
-        }
-        if (phone != null) {
-            params.add(new BasicNameValuePair("filter[PHONE]", phone));
-        }
-        return getPage(client.execute(domain, "crm.lead.list", params, tokens), leadClass);
-    }
-
-    public BitrixPage<User> listUsers(Integer start) throws BitrixApiException {
-        final List<NameValuePair> params = new ArrayList<>();
-        if (start != null) {
-            params.add(new BasicNameValuePair("start", start.toString()));
-        }
-        return getPage(client.execute(domain, "user.get", params, tokens), userClass);
     }
 
     public Contact getContact(long id) throws BitrixApiException {
@@ -81,18 +59,43 @@ public class BitrixApi<Contact, Activity, Lead, User> {
         client.execute(domain, "crm.contact.delete", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens);
     }
 
-    public Long createContact(BitrixContact contact) throws BitrixApiException {
+    public Long createContact(Contact contact) throws BitrixApiException {
         return client.execute(domain, "crm.contact.add", serializer.serialize(contact), tokens).getLong("result");
     }
 
-    public void updateContact(BitrixContact contact) throws BitrixApiException {
+    public void updateContact(Contact contact) throws BitrixApiException {
         final List<NameValuePair> params = serializer.serialize(contact);
         params.add(new BasicNameValuePair("id", Long.toString(contact.getId())));
         client.execute(domain, "crm.contact.update", params, tokens);
     }
 
-    public Long createLead(BitrixLead lead) throws BitrixApiException {
+    public BitrixPage<Lead> listLeads(Integer start, NameValuePair... additional) throws BitrixApiException {
+        final List<NameValuePair> params = new ArrayList<>();
+        if (start != null) {
+            params.add(new BasicNameValuePair("start", start.toString()));
+        }
+        if (additional != null) {
+            params.addAll(Arrays.asList(additional));
+        }
+        return getPage(client.execute(domain, "crm.lead.list", params, tokens), leadClass);
+    }
+
+    public Long createLead(Lead lead) throws BitrixApiException {
         return client.execute(domain, "crm.lead.add", serializer.serialize(lead), tokens).getLong("result");
+    }
+
+    public void updateLead(Lead lead) throws BitrixApiException {
+        final List<NameValuePair> params = serializer.serialize(lead);
+        params.add(new BasicNameValuePair("id", Long.toString(lead.getId())));
+        client.execute(domain, "crm.lead.update", params, tokens);
+    }
+
+    public BitrixPage<User> listUsers(Integer start) throws BitrixApiException {
+        final List<NameValuePair> params = new ArrayList<>();
+        if (start != null) {
+            params.add(new BasicNameValuePair("start", start.toString()));
+        }
+        return getPage(client.execute(domain, "user.get", params, tokens), userClass);
     }
 
     public BitrixPage<Activity> listActivities(Integer start, NameValuePair... additional) throws BitrixApiException {
@@ -100,7 +103,9 @@ public class BitrixApi<Contact, Activity, Lead, User> {
         if (start != null) {
             params.add(new BasicNameValuePair("start", start.toString()));
         }
-        params.addAll(Arrays.asList(additional));
+        if (additional != null) {
+            params.addAll(Arrays.asList(additional));
+        }
         return getPage(client.execute(domain, "crm.activity.list", params, tokens), activityClass);
     }
 
