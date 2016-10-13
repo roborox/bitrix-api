@@ -16,11 +16,11 @@ public class BitrixActivity implements HasId {
 	private String subject;
 	private List<BitrixCommunication> communications;
 	private Date created;
-	@FieldName("LAST_UPDATED")
-	private Date startTime;
 	@FieldName("START_TIME")
-	private Date endTime;
+	private Date startTime;
 	@FieldName("END_TIME")
+	private Date endTime;
+	@FieldName("LAST_UPDATED")
 	private Date updated;
 	@FieldName("OWNER_ID")
 	private Long ownerId;
