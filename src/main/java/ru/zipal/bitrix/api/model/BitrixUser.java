@@ -4,7 +4,7 @@ import ru.zipal.bitrix.api.common.FieldName;
 
 import java.util.List;
 
-public class BitrixUser {
+public class BitrixUser implements HasId {
 	private Long id;
 	private String name;
 	@FieldName("LAST_NAME")

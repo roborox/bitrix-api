@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BitrixActivity {
+public class BitrixActivity implements HasId {
 	public static final Pattern DURATION_PATTERN = Pattern.compile("Длительность звонка:\\s*((\\d+)\\s*мин)?\\s*((\\d+)\\sсек)?");
 
 	private Long id;

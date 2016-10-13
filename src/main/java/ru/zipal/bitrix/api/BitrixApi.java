@@ -1,27 +1,31 @@
 package ru.zipal.bitrix.api;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.zipal.bitrix.api.model.*;
+import ru.zipal.bitrix.api.model.enums.EntityType;
 import ru.zipal.bitrix.api.serialize.Serializer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User> {
+public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId, Company extends HasId> {
     private final BitrixClient client;
     private final Serializer serializer;
     private final Tokens tokens;
     private final String domain;
 
-    private final Class<Contact> contactClass;
-    private final Class<Activity> activityClass;
-    private final Class<Lead> leadClass;
     private final Class<User> userClass;
+    private final Class<Activity> activityClass;
+    private final Class<Contact> contactClass;
+    private final Class<Lead> leadClass;
+    private final Class<Company> companyClass;
 
-    protected BitrixApi(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<Contact> contactClass, Class<Activity> activityClass, Class<Lead> leadClass, Class<User> userClass) {
+    protected BitrixApi(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<User> userClass, Class<Activity> activityClass, Class<Contact> contactClass, Class<Lead> leadClass, Class<Company> companyClass) {
         this.client = client;
         this.serializer = serializer;
         this.tokens = tokens;
@@ -30,14 +34,15 @@ public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User
         this.activityClass = activityClass;
         this.leadClass = leadClass;
         this.userClass = userClass;
+        this.companyClass = companyClass;
     }
 
-    public static BitrixApi<BitrixContact, BitrixActivity, BitrixLead, BitrixUser> createDefault(BitrixClient client, Serializer serializer, Tokens tokens, String domain) {
-        return new BitrixApi<>(client, serializer, tokens, domain, BitrixContact.class, BitrixActivity.class, BitrixLead.class, BitrixUser.class);
+    public static BitrixApi<BitrixUser, BitrixActivity, BitrixContact, BitrixLead, BitrixCompany> createDefault(BitrixClient client, Serializer serializer, Tokens tokens, String domain) {
+        return new BitrixApi<>(client, serializer, tokens, domain, BitrixUser.class, BitrixActivity.class, BitrixContact.class, BitrixLead.class, BitrixCompany.class);
     }
 
-    public static <Contact extends HasId, Activity, Lead extends HasId, User> BitrixApi<Contact, Activity, Lead, User> custom(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<Contact> contactClass, Class<Activity> activityClass, Class<Lead> leadClass, Class<User> userClass) {
-        return new BitrixApi<>(client, serializer, tokens, domain, contactClass, activityClass, leadClass, userClass);
+    public static <User, Activity, Contact extends HasId, Lead extends HasId, Company extends HasId> BitrixApi<User, Activity, Contact, Lead, Company> custom(BitrixClient client, Serializer serializer, Tokens tokens, String domain, Class<User> userClass, Class<Activity> activityClass, Class<Contact> contactClass, Class<Lead> leadClass, Class<Company> companyClass) {
+        return new BitrixApi<>(client, serializer, tokens, domain, userClass, activityClass, contactClass, leadClass, companyClass);
     }
 
     public BitrixPage<Contact> listContacts(Integer start, NameValuePair... additional) throws BitrixApiException {
@@ -51,8 +56,68 @@ public class BitrixApi<Contact extends HasId, Activity, Lead extends HasId, User
         return getPage(client.execute(domain, "crm.contact.list", params, tokens), contactClass);
     }
 
+    public Map<Long, Contact> getContacts(Collection<Long> ids) throws BitrixApiException {
+        return getBatch(contactClass, ids, "crm.contact.get");
+    }
+
+    public Map<Long, Lead> getLeads(Collection<Long> ids) throws BitrixApiException {
+        return getBatch(leadClass, ids, "crm.lead.get");
+    }
+
+    public Map<Long, Company> getCompanies(Collection<Long> ids) throws BitrixApiException {
+        return getBatch(companyClass, ids, "crm.company.get");
+    }
+
+    protected <T extends HasId> Map<Long, T> getBatch(Class<T> clazz, Collection<Long> ids, String method) throws BitrixApiException {
+        final JSONObject json = client.execute(domain,"batch", ids.stream().map(id -> new BasicNameValuePair("cmd[e_" + id + "]", method + "?ID=" + id)).collect(Collectors.toList()), tokens);
+        final JSONObject result = json.getJSONObject("result").getJSONObject("result");
+        final HashMap<Long, T> map = new HashMap<>();
+        for (Long id : ids) {
+            if (result.has("e_" + id)) {
+                map.put(id, serializer.deserialize(clazz, result.getJSONObject("e_" + id)));
+            }
+        }
+        return map;
+    }
+
+    protected Class<?> getEntityClass(EntityType entityType) {
+        switch (entityType) {
+            case USER:
+                return userClass;
+            case ACTIVITY:
+                return activityClass;
+            case CONTACT:
+                return contactClass;
+            case LEAD:
+                return leadClass;
+            case COMPANY:
+                return companyClass;
+        }
+        throw new IllegalArgumentException("not supported: " + entityType);
+    }
+
+    protected Map<Long, Object> getBatch(Collection<Pair<EntityType, Long>> whatToLoad) throws BitrixApiException {
+        final JSONObject json = client.execute(domain,"batch", whatToLoad.stream().map(pair -> new BasicNameValuePair("cmd[e_" + pair.getValue() + "]", pair.getKey().getGetMethod() + "?ID=" + pair.getValue())).collect(Collectors.toList()), tokens);
+        final JSONObject result = json.getJSONObject("result").getJSONObject("result");
+        final HashMap<Long, Object> map = new HashMap<>();
+        for (Pair<EntityType, Long> pair : whatToLoad) {
+            if (result.has("e_" + pair.getValue())) {
+                map.put(pair.getValue(), serializer.deserialize(getEntityClass(pair.getKey()), result.getJSONObject("e_" + pair.getValue())));
+            }
+        }
+        return map;
+    }
+
     public Contact getContact(long id) throws BitrixApiException {
         return serializer.deserialize(contactClass, client.execute(domain, "crm.contact.get", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens).getJSONObject("result"));
+    }
+
+    public Lead getLead(long id) throws BitrixApiException {
+        return serializer.deserialize(leadClass, client.execute(domain, "crm.lead.get", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens).getJSONObject("result"));
+    }
+
+    public Company getCompany(long id) throws BitrixApiException {
+        return serializer.deserialize(companyClass, client.execute(domain, "crm.company.get", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens).getJSONObject("result"));
     }
 
     public void removeContact(long id) throws BitrixApiException {
