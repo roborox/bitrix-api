@@ -96,13 +96,13 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
         throw new IllegalArgumentException("not supported: " + entityType);
     }
 
-    protected Map<Long, Object> getBatch(Collection<Pair<EntityType, Long>> whatToLoad) throws BitrixApiException {
+    protected Map<Pair<EntityType, Long>, Object> getBatch(Collection<Pair<EntityType, Long>> whatToLoad) throws BitrixApiException {
         final JSONObject json = client.execute(domain,"batch", whatToLoad.stream().map(pair -> new BasicNameValuePair("cmd[e_" + pair.getValue() + "]", pair.getKey().getGetMethod() + "?ID=" + pair.getValue())).collect(Collectors.toList()), tokens);
         final JSONObject result = json.getJSONObject("result").getJSONObject("result");
-        final HashMap<Long, Object> map = new HashMap<>();
+        final HashMap<Pair<EntityType, Long>, Object> map = new HashMap<>();
         for (Pair<EntityType, Long> pair : whatToLoad) {
             if (result.has("e_" + pair.getValue())) {
-                map.put(pair.getValue(), serializer.deserialize(getEntityClass(pair.getKey()), result.getJSONObject("e_" + pair.getValue())));
+                map.put(pair, serializer.deserialize(getEntityClass(pair.getKey()), result.getJSONObject("e_" + pair.getValue())));
             }
         }
         return map;
