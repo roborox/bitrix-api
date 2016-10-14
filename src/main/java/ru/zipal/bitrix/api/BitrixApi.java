@@ -46,14 +46,7 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
     }
 
     public BitrixPage<Contact> listContacts(Integer start, NameValuePair... additional) throws BitrixApiException {
-        final List<NameValuePair> params = new ArrayList<>();
-        if (start != null) {
-            params.add(new BasicNameValuePair("start", start.toString()));
-        }
-        if (additional != null) {
-            params.addAll(Arrays.asList(additional));
-        }
-        return getPage(client.execute(domain, "crm.contact.list", params, tokens), contactClass);
+        return list("crm.contact.list", contactClass, start, additional);
     }
 
     public Map<Long, Contact> getContacts(Collection<Long> ids) throws BitrixApiException {
@@ -120,6 +113,10 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
         return serializer.deserialize(companyClass, client.execute(domain, "crm.company.get", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens).getJSONObject("result"));
     }
 
+    public BitrixPage<Company> listCompanies(Integer start, NameValuePair... additional) throws BitrixApiException {
+        return list("crm.company.list", companyClass, start, additional);
+    }
+
     public void removeContact(long id) throws BitrixApiException {
         client.execute(domain, "crm.contact.delete", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens);
     }
@@ -135,14 +132,7 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
     }
 
     public BitrixPage<Lead> listLeads(Integer start, NameValuePair... additional) throws BitrixApiException {
-        final List<NameValuePair> params = new ArrayList<>();
-        if (start != null) {
-            params.add(new BasicNameValuePair("start", start.toString()));
-        }
-        if (additional != null) {
-            params.addAll(Arrays.asList(additional));
-        }
-        return getPage(client.execute(domain, "crm.lead.list", params, tokens), leadClass);
+        return list("crm.lead.list", leadClass, start, additional);
     }
 
     public Long createLead(Lead lead) throws BitrixApiException {
@@ -164,14 +154,7 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
     }
 
     public BitrixPage<Activity> listActivities(Integer start, NameValuePair... additional) throws BitrixApiException {
-        final List<NameValuePair> params = new ArrayList<>();
-        if (start != null) {
-            params.add(new BasicNameValuePair("start", start.toString()));
-        }
-        if (additional != null) {
-            params.addAll(Arrays.asList(additional));
-        }
-        return getPage(client.execute(domain, "crm.activity.list", params, tokens), activityClass);
+        return list("crm.activity.list", activityClass, start, additional);
     }
 
     public Activity getActivity(long id) throws BitrixApiException {
@@ -196,6 +179,17 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
 
     public boolean isAdmin(String domain, Tokens tokens) throws BitrixApiException {
         return client.execute(domain, "user.admin", Collections.emptyList(), tokens).getBoolean("result");
+    }
+
+    private <T> BitrixPage<T> list(String method, Class<T> entityClass, Integer start, NameValuePair... additional) throws BitrixApiException {
+        final List<NameValuePair> params = new ArrayList<>();
+        if (start != null) {
+            params.add(new BasicNameValuePair("start", start.toString()));
+        }
+        if (additional != null) {
+            params.addAll(Arrays.asList(additional));
+        }
+        return getPage(client.execute(domain, method, params, tokens), entityClass);
     }
 
     private <T> BitrixPage<T> getPage(JSONObject json, Class<T> clazz) throws BitrixApiException {
