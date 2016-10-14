@@ -4,6 +4,7 @@ import ru.zipal.bitrix.api.common.FieldName;
 import ru.zipal.bitrix.api.model.enums.YesNo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BitrixLead implements HasId {
@@ -15,10 +16,14 @@ public class BitrixLead implements HasId {
 	private Long responsible;
 	@FieldName("PHONE")
 	private List<BitrixCommunication> phones;
+	@FieldName("EMAIL")
+	private List<BitrixCommunication> emails;
 	@FieldName("SOURCE_ID")
 	private String sourceId = "CALL";
 	@FieldName("SOURCE_DESCRIPTION")
 	private String sourceDescription;
+	@FieldName("DATE_MODIFY")
+	private Date updated;
 	private String comments;
 
 	public Long getId() {
@@ -36,6 +41,10 @@ public class BitrixLead implements HasId {
 		return phones;
 	}
 
+	public void setPhones(List<BitrixCommunication> phones) {
+		this.phones = phones;
+	}
+
 	public YesNo getOpened() {
 		return opened;
 	}
@@ -44,16 +53,23 @@ public class BitrixLead implements HasId {
 		this.opened = opened;
 	}
 
+	public List<BitrixCommunication> getEmails() {
+		if (emails == null) {
+			emails = new ArrayList<>();
+		}
+		return emails;
+	}
+
+	public void setEmails(List<BitrixCommunication> emails) {
+		this.emails = emails;
+	}
+
 	public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public void setPhones(List<BitrixCommunication> phones) {
-		this.phones = phones;
 	}
 
 	public String getName() {
@@ -86,6 +102,14 @@ public class BitrixLead implements HasId {
 
 	public void setSourceDescription(String sourceDescription) {
 		this.sourceDescription = sourceDescription;
+	}
+
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
 	}
 
 	public String getComments() {
