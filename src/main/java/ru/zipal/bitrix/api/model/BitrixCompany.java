@@ -17,6 +17,8 @@ public class BitrixCompany implements HasId {
 	private Long leadId;
 	@FieldName("PHONE")
 	private List<BitrixCommunication> phones = new ArrayList<>();
+	@FieldName("ASSIGNED_BY_ID")
+	private Long responsible;
 	@FieldName("EMAIL")
 	private List<BitrixCommunication> emails = new ArrayList<>();
 
@@ -80,6 +82,14 @@ public class BitrixCompany implements HasId {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public Long getResponsible() {
+		return responsible;
+	}
+
+	public void setResponsible(Long responsible) {
+		this.responsible = responsible;
 	}
 
 	@Override
