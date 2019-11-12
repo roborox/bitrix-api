@@ -2,6 +2,7 @@ package ru.zipal.bitrix.api;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,20 @@ public class BitrixHttpClient {
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private final boolean logResponse;
+    private final boolean useJson;
+
 
     public BitrixHttpClient() {
         this(false);
     }
 
     public BitrixHttpClient(boolean logResponse) {
+        this(logResponse, false);
+    }
+
+    public BitrixHttpClient(boolean logResponse, boolean useJson) {
         this.logResponse = logResponse;
+        this.useJson = useJson;
     }
 
     private JSONObject execute(Request request) throws BitrixApiException {
@@ -53,6 +61,11 @@ public class BitrixHttpClient {
     public JSONObject post(String url, List<NameValuePair> params) throws BitrixApiException {
         logger.info("post {} with {}", url, params.stream().filter(p -> !p.getName().contains("fileData")).collect(Collectors.toList()));
         return execute(Request.Post(url).bodyForm(params, UTF_8));
+    }
+
+    public JSONObject post(String url, JSONObject params) throws BitrixApiException {
+        logger.info("post {} with {}", url, params.toString());
+        return execute(Request.Post(url).bodyString(params.toString(), ContentType.APPLICATION_JSON));
     }
 
     public JSONObject get(String url) throws BitrixApiException {
