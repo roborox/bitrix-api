@@ -12,8 +12,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BitrixDeal implements HasId
-{
+public class BitrixDeal implements HasId {
     private Long id;
     @FieldName("BEGINDATE")
     private Date beginDate;

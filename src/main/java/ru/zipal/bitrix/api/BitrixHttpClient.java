@@ -23,20 +23,13 @@ public class BitrixHttpClient {
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private final boolean logResponse;
-    private final boolean useJson;
-
 
     public BitrixHttpClient() {
         this(false);
     }
 
     public BitrixHttpClient(boolean logResponse) {
-        this(logResponse, false);
-    }
-
-    public BitrixHttpClient(boolean logResponse, boolean useJson) {
         this.logResponse = logResponse;
-        this.useJson = useJson;
     }
 
     private JSONObject execute(Request request) throws BitrixApiException {
@@ -44,7 +37,7 @@ public class BitrixHttpClient {
             final BitrixResponse response = request.socketTimeout(TIMEOUT).connectTimeout(TIMEOUT).execute().handleResponse(new BitrixResponseHandler(logResponse));
             if (response instanceof SuccessBitrixResponse) {
                 return ((SuccessBitrixResponse) response).getResult();
-            } else if (response instanceof ErrorBitrixResponse){
+            } else if (response instanceof ErrorBitrixResponse) {
                 if (((ErrorBitrixResponse) response).getStatus() == 401 || ((ErrorBitrixResponse) response).getStatus() == 403) {
                     throw new UnauthorizedBitrixApiException(((ErrorBitrixResponse) response).getBody(), ((ErrorBitrixResponse) response).getStatus());
                 } else {

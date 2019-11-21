@@ -68,7 +68,7 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
     }
 
     protected <T extends HasId> Map<Long, T> getBatch(Class<T> clazz, Collection<Long> ids, String method) throws BitrixApiException {
-        final JSONObject json = client.execute(domain,"batch", ids.stream().map(id -> new BasicNameValuePair("cmd[e_" + id + "]", method + "?ID=" + id)).collect(Collectors.toList()), tokens);
+        final JSONObject json = client.execute(domain, "batch", ids.stream().map(id -> new BasicNameValuePair("cmd[e_" + id + "]", method + "?ID=" + id)).collect(Collectors.toList()), tokens);
         final JSONObject result = json.getJSONObject("result").getJSONObject("result");
         final HashMap<Long, T> map = new HashMap<>();
         for (Long id : ids) {
@@ -96,7 +96,7 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
     }
 
     protected Map<Pair<EntityType, Long>, Object> getBatch(Collection<Pair<EntityType, Long>> whatToLoad) throws BitrixApiException {
-        final JSONObject json = client.execute(domain,"batch", whatToLoad.stream().map(pair -> new BasicNameValuePair("cmd[e_" + pair.getValue() + "]", pair.getKey().getGetMethod() + "?ID=" + pair.getValue())).collect(Collectors.toList()), tokens);
+        final JSONObject json = client.execute(domain, "batch", whatToLoad.stream().map(pair -> new BasicNameValuePair("cmd[e_" + pair.getValue() + "]", pair.getKey().getGetMethod() + "?ID=" + pair.getValue())).collect(Collectors.toList()), tokens);
         final JSONObject result = json.getJSONObject("result").getJSONObject("result");
         final HashMap<Pair<EntityType, Long>, Object> map = new HashMap<>();
         for (Pair<EntityType, Long> pair : whatToLoad) {

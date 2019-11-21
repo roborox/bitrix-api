@@ -4,7 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.http.NameValuePair;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import ru.zipal.bitrix.api.BitrixApiException;
 import ru.zipal.bitrix.api.model.BitrixActivity;
 import ru.zipal.bitrix.api.model.BitrixUser;

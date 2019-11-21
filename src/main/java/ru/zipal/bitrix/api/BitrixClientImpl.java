@@ -5,8 +5,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class BitrixClientImpl implements BitrixClient
-{
+public class BitrixClientImpl implements BitrixClient {
     public static final String URL_FORMAT = "https://%s/rest/%s.json?auth=%s";
     public static final String TOKEN_URL_FORMAT = "https://%s/oauth/token/?client_id=%s&client_secret=%s&grant_type=refresh_token&refresh_token=%s";
     public static final String REFRESH_TOKEN = "refresh_token";
@@ -60,5 +59,4 @@ public class BitrixClientImpl implements BitrixClient
         tokens.updateTokens(newAccessToken, newRefreshToken);
         return newAccessToken;
     }
-
 }
