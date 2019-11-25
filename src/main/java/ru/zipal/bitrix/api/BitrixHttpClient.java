@@ -2,6 +2,7 @@ package ru.zipal.bitrix.api;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class BitrixHttpClient {
             final BitrixResponse response = request.socketTimeout(TIMEOUT).connectTimeout(TIMEOUT).execute().handleResponse(new BitrixResponseHandler(logResponse));
             if (response instanceof SuccessBitrixResponse) {
                 return ((SuccessBitrixResponse) response).getResult();
-            } else if (response instanceof ErrorBitrixResponse){
+            } else if (response instanceof ErrorBitrixResponse) {
                 if (((ErrorBitrixResponse) response).getStatus() == 401 || ((ErrorBitrixResponse) response).getStatus() == 403) {
                     throw new UnauthorizedBitrixApiException(((ErrorBitrixResponse) response).getBody(), ((ErrorBitrixResponse) response).getStatus());
                 } else {
@@ -53,6 +54,11 @@ public class BitrixHttpClient {
     public JSONObject post(String url, List<NameValuePair> params) throws BitrixApiException {
         logger.info("post {} with {}", url, params.stream().filter(p -> !p.getName().contains("fileData")).collect(Collectors.toList()));
         return execute(Request.Post(url).bodyForm(params, UTF_8));
+    }
+
+    public JSONObject post(String url, JSONObject params) throws BitrixApiException {
+        logger.info("post {} with {}", url, params.toString());
+        return execute(Request.Post(url).bodyString(params.toString(), ContentType.APPLICATION_JSON));
     }
 
     public JSONObject get(String url) throws BitrixApiException {

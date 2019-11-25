@@ -7,6 +7,10 @@
 	<artifactId>bitrix-api</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+	<properties>
+		<lombok.version>1.18.10</lombok.version>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -70,6 +74,12 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
