@@ -12,11 +12,13 @@ public class BitrixClientImpl implements BitrixClient {
     public static final String ACCESS_TOKEN = "access_token";
 
     private final BitrixHttpClient httpClient;
+    private final Tokens tokens;
     private final String appId;
     private final String appSecret;
 
-    public BitrixClientImpl(BitrixHttpClient httpClient, String appId, String appSecret) {
+    public BitrixClientImpl(BitrixHttpClient httpClient, Tokens tokens, String appId, String appSecret) {
         this.httpClient = httpClient;
+        this.tokens = tokens;
         this.appId = appId;
         this.appSecret = appSecret;
     }
@@ -29,7 +31,8 @@ public class BitrixClientImpl implements BitrixClient {
         return String.format(TOKEN_URL_FORMAT, domain, appId, appSecret, refreshToken);
     }
 
-    public JSONObject execute(String domain, String method, List<NameValuePair> params, Tokens tokens) throws BitrixApiException {
+    @Override
+    public JSONObject execute(String domain, String method, List<NameValuePair> params) throws BitrixApiException {
         try {
             return httpClient.post(getUrl(domain, method, tokens.getAccessToken()), params);
         } catch (UnauthorizedBitrixApiException e) {
@@ -38,7 +41,8 @@ public class BitrixClientImpl implements BitrixClient {
         }
     }
 
-    public JSONObject execute(String domain, String method, JSONObject params, Tokens tokens) throws BitrixApiException {
+    @Override
+    public JSONObject execute(String domain, String method, JSONObject params) throws BitrixApiException {
         try {
             return httpClient.post(getUrl(domain, method, tokens.getAccessToken()), params);
         } catch (UnauthorizedBitrixApiException e) {

@@ -19,12 +19,12 @@ public class BitrixWebhookClientImpl implements BitrixClient {
     }
 
     @Override
-    public JSONObject execute(String domain, String method, List<NameValuePair> params, Tokens tokens) throws BitrixApiException {
+    public JSONObject execute(String domain, String method, List<NameValuePair> params) throws BitrixApiException {
         return httpClient.post(getUrl(domain, method), params);
     }
 
     @Override
-    public JSONObject execute(String domain, String method, JSONObject params, Tokens tokens) throws BitrixApiException {
+    public JSONObject execute(String domain, String method, JSONObject params) throws BitrixApiException {
         return httpClient.post(getUrl(domain, method), params);
     }
 
