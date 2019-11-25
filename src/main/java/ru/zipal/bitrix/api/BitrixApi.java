@@ -143,6 +143,12 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
         client.execute(domain, "crm.contact.update", params);
     }
 
+    public void updateCompany(Company company) throws BitrixApiException {
+        final List<NameValuePair> params = serializer.serialize(company);
+        params.add(new BasicNameValuePair("id", Long.toString(company.getId())));
+        client.execute(domain, "crm.company.update", params);
+    }
+
     public BitrixPage<Lead> listLeads(Integer start, NameValuePair... additional) throws BitrixApiException {
         return list("crm.lead.list", leadClass, start, additional);
     }
