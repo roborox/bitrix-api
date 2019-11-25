@@ -123,6 +123,14 @@ public class BitrixApi<User, Activity, Contact extends HasId, Lead extends HasId
         return list("crm.company.list", companyClass, start, additional);
     }
 
+    public Long createCompany(Company company) throws BitrixApiException {
+        return client.execute(domain, "crm.company.add", serializer.serialize(company), tokens).getLong("result");
+    }
+
+    public void removeCompany(long id) throws BitrixApiException {
+        client.execute(domain, "crm.company.delete", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens);
+    }
+
     public void removeContact(long id) throws BitrixApiException {
         client.execute(domain, "crm.contact.delete", Collections.singletonList(new BasicNameValuePair("id", Long.toString(id))), tokens);
     }
